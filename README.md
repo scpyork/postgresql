@@ -18,7 +18,7 @@ createuser -sPE mysuperuser
 Log in 
 `sudo -s ; su - postgres`
 
-`createdb <name>
+`createdb <name>`
 
 
 
