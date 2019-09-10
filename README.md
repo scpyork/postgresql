@@ -8,17 +8,19 @@ python -m pip install --trusted-host pypi.org --trusted-host files.pythonhosted.
 ```
 
 ## Add users 
-`CREATE ROLE test WITH LOGIN ENCRYPTED PASSWORD 'test';` - new user named test
-`\du` - see users 
-`CREATE ROLE supertest WITH SUPERUSER CREATEDB CREATEROLE LOGIN ENCRYPTED PASSWORD 'supertest'`
-`\q` quit 
-
 ```
 #shell comands 
 createuser -PE demorole2
 dropuser -i demorole2
 createuser -sPE mysuperuser
 ```
+## New database
+Log in 
+`sudo -s ; su - postgres`
+
+`createdb <name>
+
+
 
 
 ## New db
