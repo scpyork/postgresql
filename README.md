@@ -25,3 +25,10 @@ Log in
 
 ## New db
 1. Log in as user
+
+
+## resource 
+
+https://launchschool.com/books/sql_first_edition/read/multi_tables
+
+
