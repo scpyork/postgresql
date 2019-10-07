@@ -73,3 +73,19 @@ createuser -sPE mysuperuser
 Log in
 `sudo -s ; su - postgres`
 `createdb <name>`
+<<<<<<< HEAD
+=======
+
+
+
+
+## New db
+1. Log in as user
+
+
+## resource 
+
+https://launchschool.com/books/sql_first_edition/read/multi_tables
+
+
+>>>>>>> d4b86e845c02da7bcb0939fb4f03e11994495c66
