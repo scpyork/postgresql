@@ -85,3 +85,14 @@ Sometimes we wish to combign two tables to produce an output. We can do this thr
              2 |      2625 | 2013 | tonnes | 303788.000000 | S    |      2625 | Fruits, Other
              2 |      2620 | 2013 | tonnes | 610570.000000 | S    |      2620 | Grapes and products (excl wine)
     (10 rows)
+
+
+
+## Others
+`
+SELECT * FROM comm_trade.data d JOIN "comm_trade.countries" c ON(d.reporter = c.area_code) WHERE d.id=20  LIMIT 10;
+
+
+
+
+`

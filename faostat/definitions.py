@@ -7,6 +7,8 @@ Create the 6nf style relatable item tables in Postgre
 from login import *
 print (conn)
 
+cursor.execute('CREATE SCHEMA IF NOT EXISTS fao;')
+
 
 __loc__ = '/run/user/1000/gvfs/sftp:host=sftp.york.ac.uk,user=dp626/shared/storage/sei/SEI-Y RESEARCH GROUPS/SCP Group/SHARED RESOURCES/FAOSTAT_DATA/'
 __loc__ = '../data/'
@@ -26,8 +28,8 @@ countries.to_csv('temp.csv', index = True, header=False)
 print('countries')
 cmd = {
 'countries':"""
-                DROP TABLE IF EXISTS countries;
-                CREATE TABLE countries (
+                DROP TABLE IF EXISTS fao.countries;
+                CREATE TABLE fao.countries (
                         country_code INTEGER PRIMARY KEY,
                         country VARCHAR(50) NOT NULL,
                         M49 VARCHAR(4),
@@ -39,10 +41,10 @@ cmd = {
 
 for c in cmd:
     cursor.execute(cmd[c])
-    print 'load'
+    print ('load')
     with open('./temp.csv', 'r') as f:
         #next(f) # Skip the header row.
-        cursor.copy_expert(r"COPY %s from stdin DELIMITERS ',' CSV QUOTE E'\"';"%c,f)
+        cursor.copy_expert(r"COPY fao.%s from stdin DELIMITERS ',' CSV QUOTE E'\"';"%c,f)
         #cursor.copy_from(f, c, sep=',')
         conn.commit()
 
@@ -58,8 +60,8 @@ print('item')
 cmd = {
 
 'items':"""
-                DROP TABLE IF EXISTS items;
-                CREATE TABLE items (
+                DROP TABLE IF EXISTS fao.items;
+                CREATE TABLE fao.items (
                         item_code INTEGER PRIMARY KEY,
                         item VARCHAR(50) NOT NULL
                         );
@@ -70,7 +72,7 @@ for c in cmd:
     cursor.execute(cmd[c])
     with open('./temp.csv', 'r') as f:
 
-        cursor.copy_expert(r"COPY %s from stdin DELIMITERS ',' CSV QUOTE E'\"';"%c,f)
+        cursor.copy_expert(r"COPY fao.%s from stdin DELIMITERS ',' CSV QUOTE E'\"';"%c,f)
         conn.commit()
 
 
@@ -85,8 +87,8 @@ print('element')
 cmd = {
 
 'element':"""
-                DROP TABLE IF EXISTS element;
-                CREATE TABLE element (
+                DROP TABLE IF EXISTS fao.element;
+                CREATE TABLE fao.element (
                         element_code INTEGER PRIMARY KEY,
                         element VARCHAR(50) NOT NULL
                         );
@@ -97,7 +99,7 @@ for c in cmd:
     cursor.execute(cmd[c])
     with open('./temp.csv', 'r') as f:
 
-        cursor.copy_expert(r"COPY %s from stdin DELIMITERS ',' CSV QUOTE E'\"';"%c,f)
+        cursor.copy_expert(r"COPY fao.%s from stdin DELIMITERS ',' CSV QUOTE E'\"';"%c,f)
         conn.commit()
 
 
@@ -106,8 +108,8 @@ for c in cmd:
 
 cmd = {
 'flags':"""
-                DROP TABLE IF EXISTS flags;
-                CREATE TABLE flags (
+                DROP TABLE IF EXISTS fao.flags;
+                CREATE TABLE fao.flags (
                         id INTEGER PRIMARY KEY,
                         flag VARCHAR(5),
                         desciption VARCHAR(250)
@@ -128,7 +130,7 @@ for c in cmd:
     #os.system("sed '1d' ./temp.csv > ./temp.csv")
     with open('./temp.csv', 'r') as f:
         #next(f) # Skip the header row.
-        cursor.copy_expert(r"COPY %s from stdin DELIMITERS ',' CSV QUOTE E'\"';"%c,f)
+        cursor.copy_expert(r"COPY fao.%s from stdin DELIMITERS ',' CSV QUOTE E'\"';"%c,f)
         #cursor.copy_from(f, c, sep=',')
         conn.commit()
 
@@ -141,68 +143,4 @@ for c in cmd:
 '''
 https://www.dataquest.io/blog/loading-data-into-postgres/
 http://www.postgresqltutorial.com/
-
-
--- Assuming you have already created an imported_users table
--- Assuming your CSV has no headers
-\copy imported_users from 'imported_users.csv' csv;
-
--- If your CSV does have headers, they need to match the columns in your table
-\copy imported_users from 'imported_users.csv' csv header;
-
--- If you want to only import certain columns
-\copy imported_users (id, email) from 'imported_users.csv' csv header;
-'''
-
-
-
-
-##############
-#old
-#####################
-
-def create_tables():
-    """ create tables in the PostgreSQL database"""
-    commands = (
-        """
-        CREATE TABLE vendors (
-            vendor_id SERIAL PRIMARY KEY,
-            vendor_name VARCHAR(255) NOT NULL
-        )
-        """,
-        """ CREATE TABLE parts (
-                part_id SERIAL PRIMARY KEY,
-                part_name VARCHAR(255) NOT NULL
-                )
-        """,
-        """
-        CREATE TABLE part_drawings (
-                part_id INTEGER PRIMARY KEY,
-                file_extension VARCHAR(5) NOT NULL,
-                drawing_data BYTEA NOT NULL,
-                FOREIGN KEY (part_id)
-                REFERENCES parts (part_id)
-                ON UPDATE CASCADE ON DELETE CASCADE
-        )
-        """,
-        """
-        CREATE TABLE vendor_parts (
-                vendor_id INTEGER NOT NULL,
-                part_id INTEGER NOT NULL,
-                PRIMARY KEY (vendor_id , part_id),
-                FOREIGN KEY (vendor_id)
-                    REFERENCES vendors (vendor_id)
-                    ON UPDATE CASCADE ON DELETE CASCADE,
-                FOREIGN KEY (part_id)
-                    REFERENCES parts (part_id)
-                    ON UPDATE CASCADE ON DELETE CASCADE
-        )
-        """)
-'''    for command in commands:
-            cur.execute(command)
-            # close communication with the PostgreSQL database server
-            cur.close()
-            # commit the changes
-            conn.commit()
-
 '''

@@ -60,6 +60,8 @@ except (Exception, psycopg2.Error) as error :
 
 ##Other
 
+## drop all tablets
+`select 'drop table "' || tablename || '" cascade;' from pg_tables;`
 
 
 ## Add users
@@ -83,7 +85,7 @@ Log in
 1. Log in as user
 
 
-## resource 
+## resource
 
 https://launchschool.com/books/sql_first_edition/read/multi_tables
 
