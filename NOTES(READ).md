@@ -58,7 +58,8 @@ except (Exception, psycopg2.Error) as error :
 
  ```
 
-# Commands
+
+## ADMIN CMDS - notes
 
 - Show all schemas `select nspname from pg_catalog.pg_namespace;`
 
@@ -67,7 +68,6 @@ except (Exception, psycopg2.Error) as error :
 - Drop all tables `select 'drop table "' || tablename || '" cascade;' from pg_tables;`
 
 
-## ADMIN CMDS
 `sudo -s ; su - postgres`
 `createdb <name>`
 
