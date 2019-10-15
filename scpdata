@@ -1,0 +1,11 @@
+      nspname       | nspowner |                               nspacl                               
+--------------------+----------+--------------------------------------------------------------------
+ pg_toast           |       10 | 
+ pg_temp_1          |       10 | 
+ pg_toast_temp_1    |       10 | 
+ pg_catalog         |       10 | {postgres=UC/postgres,=U/postgres}
+ information_schema |       10 | {postgres=UC/postgres,=U/postgres}
+ public             |       10 | {postgres=UC/postgres,=U/postgres}
+ scpdata            |    16400 | {scpdata=UC/scpdata,scpdata_read=U/scpdata,scpdata_edit=U/scpdata}
+(7 rows)
+

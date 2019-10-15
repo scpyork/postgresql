@@ -1,0 +1,47 @@
+#! /usr/bin/bash
+
+DBPATH='/var/lib/neo4j/data/databases/'
+FILE="${DBPATH}$1.db"
+CONFIGLOC="/etc/neo4j/"
+CF="${CONFIGLOC}neo4j.conf"
+
+#stop if running
+neo4j stop;
+pkill -U neo4j;
+
+
+echo "Checking for: ${FILE}"
+
+if [[ -r $FILE ]];then
+   echo "Found $1";
+ else
+   echo 'Not found!';
+   echo '';
+
+   #Do we wish to create new
+   read -t 10 -p "Type previously entered name to create a new database (times out in 10 seconds):" -a new
+   if [ $1 == $new ];then
+      echo "Creating a new database."
+   else
+      echo 'Existing databases are: ';
+      ls ${DBPATH} ;
+      exit;
+   fi;
+fi
+
+
+# Now we update neo4j config
+
+echo 'Creating new Neo4j.conf from backup (neo4j.conf.bak)';
+
+cp "${CF}.bak" "${CF}";
+
+sed -i -e "s/\#dbms.active_database=graph.db/dbms.active_database=${1}.db/g" "${CF}" &&
+head "${CF}"
+
+
+#start neo4j
+
+neo4j start;
+
+echo "http://localhost:7474/browser/"

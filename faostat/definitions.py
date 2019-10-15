@@ -36,10 +36,11 @@ cmd = {
                         ISO2 VARCHAR(4),
                         ISO3 VARCHAR(4)
                         );
-            """,
+            """
 }
 
 for c in cmd:
+    print(c)
     cursor.execute(cmd[c])
     print ('load')
     with open('./temp.csv', 'r') as f:
