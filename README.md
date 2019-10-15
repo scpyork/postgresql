@@ -14,10 +14,6 @@ For questions contact daniel.ellis@york.ac.[uk]
 library('RPostgreSQL')
 ```
 
-    Loading required package: DBI
-
-
-
 ```R
 # Lets log into the database
 
