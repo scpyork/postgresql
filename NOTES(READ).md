@@ -35,7 +35,7 @@ This consists of 4 lines:
 ## Example login script
 See faostat folder.
 
-`python
+```python
 import psycopg2
 from os.path import expanduser
 import sys
@@ -56,7 +56,7 @@ except (Exception, psycopg2.Error) as error :
     print ("Error while connecting to PostgreSQL", error)
 
 
- `
+ ```
 
 # Commands
 
