@@ -3,6 +3,8 @@ import glob
 from multiprocessing import Pool
 from login import *
 
+recompute = True
+
 #Classification,Year,Period,Period Desc.,Aggregate Level,Is Leaf Code,Trade Flow Code,Trade Flow,Reporter Code,Reporter,Reporter ISO,Partner Code,Partner,Partner ISO,Commodity Code,Commodity,Qty Unit Code,Qty Unit,Qty,Netweight (kg),Trade Value (US$),Flag
 
 files = list(filter( lambda x: 'corrected' in x, glob.glob('../../Comtrade_parse/data/*csv')))
@@ -27,7 +29,8 @@ def individual(f):
     p = p.groupby(by=list(p.columns)).first().index
     p = pd.DataFrame(list(p))
 
-    countries = pd.concat([r,p], axis = 0)
+    countries = pd.concat([r,p], axis = 0).groupby('area_code').agg(lambda x: '|'.join(set(x.values[0].split('|'))))
+    countries['area_code'] = countries.index
 
     qty = d['Qty Unit Code,Qty Unit'.split(',')]
     qty = qty.groupby(by=list(qty.columns)).first().index
@@ -40,23 +43,23 @@ def individual(f):
     print("--- %s minutes to complete ---\n" % ((time.time() - start_time)/60.) , f, d.shape)
     return items, countries, qty, trade
 
-'''
-pool = Pool(processes=20)              # start 4 worker processes
+if recompute:
+    pool = Pool(processes=10)              # start 4 worker processes
 
-data = pool.map(individual, files[:10])
-g = []
-print ('final')
-for i,n in enumerate('items,countries,qty,trade'.split(',')):
-    print(n)
-    nd = pd.concat([j[i] for j in data],axis = 0, ignore_index = True)
+    data = pool.map(individual, files[:10])
+    g = []
+    print ('final')
+    for i,n in enumerate('items,countries,qty,trade'.split(',')):
+        print(n)
+        nd = pd.concat([j[i] for j in data],axis = 0, ignore_index = True)
 
-    nd = nd.groupby(by=list(nd.columns)).first().index
-    nd = pd.DataFrame(list(nd))
-    import csv
+        nd = nd.groupby(by=list(nd.columns)).first().index
+        nd = pd.DataFrame(list(nd))
+        import csv
 
-    nd.to_csv(n+'.csv',index_label=False,index=False,# quotechar='"',
-                      header=False)
-'''
+        nd.to_csv(n+'.csv',index_label=False,index=False,# quotechar='"',
+                          header=False)
+
 print('maketables')
 cmd = {
 'items':"""
@@ -64,8 +67,9 @@ cmd = {
                 CREATE TABLE comm_trade.items (
                         classification VARCHAR(5) ,
                         commodity_code VARCHAR(10) ,
-                        description VARCHAR(500),
-                        PRIMARY KEY (classification,commodity_code)
+                        description VARCHAR(1000),
+                        PRIMARY KEY (classification,commodity_code),
+                        UNIQUE (classification,commodity_code)
                         );
             """,
 'countries':"""
@@ -112,21 +116,16 @@ for i in 'items,countries,qty,trade'.split(','):
         import pandas.io.sql as sqlio
         table =  sqlio.read_sql_query('SELECT * FROM comm_trade.%s LIMIT 0;'%i, conn)
 
-        df = pd.read_csv('%s.csv'%i)
-
-
+        df = pd.read_csv('%s.csv'%i,dtype=str)
         df.columns = table.columns
-        df.to_sql('comm_trade.%s'%i, engine, if_exists='append', chunksize= 5000)
+        df.to_csv('temp.csv', index = False, header=False)
 
+        #df.to_sql('comm_trade.%s'%i, engine, if_exists='append', chunksize= 5000)
 
-
-
-
-        '''
-        with open('./%s.csv'%i, 'r') as f:
+        with open('./temp.csv', 'r') as f:
             #next(f) # Skip the header row.
             #
-            cursor.copy_expert(r"COPY comm_trade.%s from stdin CSV QUOTE E'\"'  ENCODING 'LATIN1';"%c,f)
+            cp = "COPY comm_trade.%s from stdin CSV QUOTE E'\"' DELIMITER ',' ENCODING 'LATIN1';"%i
+            cursor.copy_expert(cp,f)
             #cursor.copy_from(f,'comm_trade.%s'%c, sep=',', null='\\N',  columns=None)
             conn.commit()
-'''
