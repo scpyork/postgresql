@@ -3,7 +3,7 @@
 A quick demonstration on how to do this using the R PostgreSQL library
 `install.packages('RPostgreSQL')`
 
-PYTHON USAGE: Read *NOTES.md* , and import the load file: `from load import *`.  Here you can use `cursor.execute("<SELECT ... >")` to submit queries.
+PYTHON USAGE: Read **NOTES.md** , and import the load file: `from load import *`.  Here you can use `cursor.execute("<SELECT ... >")` to submit queries.
 
 R can be installed on anaconda using `conda install -c r r-irkernel`
 
